@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  devpi:
+    build: .
+    networks:
+    - backend
+    expose:
+    - "3141"
+    volumes:
+    - devpi-files:/srv/devpi
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+    - "8080:80"
+    networks:
+    - backend
+    volumes:
+    - devpi-files:/srv/devpi
+    
+
+networks:
+  backend:  
+
+volumes:
+  devpi-files:
