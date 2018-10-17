@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: devpi-pvs
+metadata:
+  name: devpi-pvs
+  annotations:
+    description: PV Template for file and db storage for devpi
+    tags: PVS, DEVPI
+objects:
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: devpi-file-storage
+  spec:
+    capacity:
+      storage: 10Gi
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      path: "${BASE_PATH}/files"
+      server: "${NFS_HOST}"
+
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: devpi-db-storage
+  spec:
+    capacity:
+      storage: 1Gi
+    accessModes:
+    - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      path: "${BASE_PATH}/db"
+      server: "${NFS_HOST}"
+
+parameters:
+- name: BASE_PATH
+  displayName: Exports Directory Base Path
+  required: true
+  description: The parent directory of your NFS exports
+  value: "/exports"
+- name: NFS_HOST
+  displayName: NFS Server Hostname
+  required: true
+  description: The hostname or IP address of the NFS server
+
+
