@@ -23,25 +23,34 @@ Installation
     # 2. devpi-db-storage for db if postgre is used as metadata backend (currently not used)
     oc process -f devpi-pv-template.yaml -p NFS_HOST=<pv server> -p BASE_PATH=<some-path> | oc create -f -
 
-    # NOTE: make sure $BASE_PATH/{files,db} already exist in NFS server
+    # NOTE: make sure $BASE_PATH/{files,db} folders already exist in NFS server
 
     # nginx image needs anyuid rights to work correctly
     # so, service account with anyuid rights has to be created
     oc adm policy add-scc-to-user anyuid system:serviceaccount:${PROJ}:devpi-nginx
 
     # rollout app
-    oc process -f devpi-template.yaml -p NAME=${PROJ} -p FRONTEND_URL=devpi.apps.example.com | oc create -f -
+    oc new-app -f devpi-template.yaml -p NAME=${PROJ} -p FRONTEND_URL=devpi.apps.example.com
 
-    #TODO: use new-app instead
 
     # NOTE: if image building didn't start, it can be started by
     oc start-build bc/devpi
     oc logs -f bc/devpi
 
-    # check that all pods
+    # wait until image is built and then check that all pods are up and running
     oc get pods -w
 
+    # smoke test
+    pip install -U --pre -q devpi-client
+    devpi use http://devpi.apps.example.com
+    devpi login root --password ''
+    devpi user -m root password=123
+    devpi user -c alice password=456  email=alice@example.com
+    devpi login alice --password=456
+    devpi index -c dev bases=root/pypi
+    devpi use --set-cfg alice/dev
 
+    pip install pytest
 
 
 Contributing
