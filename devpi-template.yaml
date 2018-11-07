@@ -216,6 +216,8 @@ objects:
         ref: "${SOURCE_REPOSITORY_REF}"
       contextDir: ""
       images:
+    triggers:
+      - type: ConfigChange
     strategy:
       dockerStrategy:
         noCache: true
@@ -268,6 +270,9 @@ objects:
         - name: "file-storage"
           persistentVolumeClaim:
             claimName: "${NAME}-file-storage-pvc"
+      triggers:
+      - type: ImageChange
+      - type: ConfigChange
 
 parameters:
 - name: NAME
