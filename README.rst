@@ -24,6 +24,7 @@ Installation
     oc process -f devpi-pv-template.yaml -p NFS_HOST=<pv server> -p BASE_PATH=<some-path> | oc create -f -
 
     # NOTE: make sure $BASE_PATH/{files,db} folders already exist in NFS server
+    # NOTE: above stuff isn't needed if openshift cluster is configured for autoprovisioning pvs
 
     # nginx image needs anyuid rights to work correctly
     # so, service account with anyuid rights has to be created

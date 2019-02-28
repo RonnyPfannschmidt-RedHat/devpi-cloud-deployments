@@ -11,7 +11,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: "devpi-db-storage-pvc"
+    name: "${NAME}-db-storage-pvc"
   spec:
     accessModes:
     - ReadWriteOnce
@@ -30,7 +30,7 @@ objects:
     resources:
       requests:
         storage: "10Gi"
-    volumeName: "devpi-file-storage"
+    volumeName: "${NAME}-file-storage"
 
 - apiVersion: v1
   kind: Route
@@ -75,23 +75,8 @@ objects:
 
 
           # ========= ssl ===============
-          ssl                  on;
-          #ssl_certificate      /etc/pki/nginx/www.example.net.crt;
-          #ssl_certificate_key  /etc/pki/nginx/www.example.net.key;
-          #ssl_prefer_server_ciphers on;
-          #ssl_session_timeout 1d;
-          #ssl_session_cache shared:SSL:50m;
-          #ssl_session_tickets off;
+          listen 443 ssl;
 
-          # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
-          #ssl_dhparam /etc/pki/nginx/dh2048.pem;
-
-          # intermediate configuration. tweak to your needs.
-          #ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-          #ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
-
-          listen 443;
-          #server_name _ *;
           rewrite ^(.*) http://$host$1 permanent;
           # ==============================
 
@@ -230,7 +215,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: "devpi:latest"
+        name: "${NAME}:latest"
         #todo: add image update hooks
     source:
       type: Git
@@ -270,7 +255,7 @@ objects:
       spec:
         containers:
         - name: ${NAME}
-          image: "devpi:latest"
+          image: "${NAME}:latest"
           ports:
           - containerPort: 3141
           readinessProbe:
