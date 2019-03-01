@@ -1,0 +1,11 @@
+FROM nginx:latest
+
+
+RUN apt-get update && \
+    apt-get install -y openssl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /etc/nginx/ssl && \
+    openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.devpi.com" \
+    -keyout /etc/nginx/ssl/nginx.key  -out /etc/nginx/ssl/nginx.crt
