@@ -122,7 +122,7 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: "nginx"
+    name: "devpi-nginx"
     annotations:
       description: Deploys nginx pod and makes it use customized config and stored files
   spec:
@@ -132,12 +132,12 @@ objects:
     - type: ConfigChange
     replicas: 1
     selector:
-      name: "nginx"
+      name: "devpi-nginx"
     template:
       metadata:
-        name: "nginx"
+        name: "devpi-nginx"
         labels:
-          name: "nginx"
+          name: "devpi-nginx"
       spec:
         securityContext: {}
         serviceAccount: devpi-nginx
