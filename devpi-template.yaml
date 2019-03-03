@@ -40,7 +40,7 @@ objects:
     host: "${FRONTEND_URL}"
     to:
       kind: Service
-      name: "nginx"
+      name: "devpi-nginx"
     tls:
       termination:                   edge
       insecureEdgeTerminationPolicy: Allow
@@ -48,7 +48,7 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: "nginx"
+    name: "devpi-nginx"
     annotations:
       description: waits for pypi requests and serves them
   spec:
@@ -56,8 +56,11 @@ objects:
     - name: "http"
       port: 80
       targetPort: 80
+    - name: "https"
+        port: 443
+        targetPort: 443
     selector:
-      name: "nginx"
+      name: "devpi-nginx"
 
 - apiVersion: v1
   kind: ConfigMap
@@ -147,6 +150,7 @@ objects:
           image: "devpi-nginx:latest"
           ports:
           - containerPort: 80
+          - containerPort: 443
           readinessProbe:
             timeoutSeconds: 1
             initialDelaySeconds: 5
