@@ -11,7 +11,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: "devpi-db-storage-pvc"
+    name: "${NAME}-db-storage-pvc"
   spec:
     accessModes:
     - ReadWriteOnce
@@ -30,7 +30,7 @@ objects:
     resources:
       requests:
         storage: "10Gi"
-    volumeName: "devpi-file-storage"
+    volumeName: "${NAME}-file-storage"
 
 - apiVersion: v1
   kind: Route
@@ -38,11 +38,12 @@ objects:
     name: "${NAME}-frontend"
   spec:
     host: "${FRONTEND_URL}"
-    port:
-      targetPort: 80
     to:
       kind: Service
       name: "nginx"
+    tls:
+      termination:                   edge
+      insecureEdgeTerminationPolicy: Allow
 
 - apiVersion: v1
   kind: Service
@@ -207,7 +208,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: "devpi:latest"
+        name: "${NAME}:latest"
         #todo: add image update hooks
     source:
       type: Git
@@ -247,7 +248,7 @@ objects:
       spec:
         containers:
         - name: ${NAME}
-          image: "devpi:latest"
+          image: "${NAME}:latest"
           ports:
           - containerPort: 3141
           readinessProbe:
